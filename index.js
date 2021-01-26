@@ -3,9 +3,18 @@ const fs = require('fs');
 let accumilator = 0;
 let lineIndex = 0;
 
+let visitedIndexes = new Set();
+
 const items = fs.readFileSync('./input.txt').toString().replace(/\r\n/g, '\n').split('\n');
 
 function executeItem(item) {
+    if (visitedIndexes.has(lineIndex)) {
+        console.log('infinite loop detected:', lineIndex);
+        visitedIndexes.clear();
+    }
+
+    visitedIndexes.add(lineIndex);
+
     const command = extractCommand(item);
     const operation = extractOperation(item);
     const value = extractValue(item);
