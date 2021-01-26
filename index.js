@@ -1,21 +1,46 @@
 const fs = require('fs');
-const readline = require('readline');
 
 let accumilator = 0;
 let lineIndex = 0;
-let uniqueItems = new Set();
 
-const readInterface = readline.createInterface({
-    input: fs.createReadStream('./input.txt'),
-    output: process.stdout,
-    console: false
-});
+const items = fs.readFileSync('./input.txt').toString().replace(/\r\n/g, '\n').split('\n');
 
-readInterface.on('line', function(line) {
-    console.log(extractCommand(line))
-    console.log(extractOperation(line));
-    console.log(extractValue(line));
-});
+function executeItem(item) {
+    const command = extractCommand(item);
+    const operation = extractOperation(item);
+    const value = extractValue(item);
+
+    processLine(command, operation, value);
+}
+
+executeItem(items[0]);
+
+function processLine(command, operator, value) {
+    if (command !== 'nop') {
+        doOperation(command, operator, value);
+    } else {
+        lineIndex++;
+    }
+
+    executeItem(items[lineIndex]);
+}
+
+function doOperation(command, operator, value) {
+    if (command === 'acc') {
+        if (operator === '+') {
+            accumilator += +value;
+        } else if (operator === '-') {
+            accumilator -= +value;
+        }
+        lineIndex++;
+    } else if (command === 'jmp') {
+        if (operator === '+') {
+            lineIndex += +value;
+        } else if (operator === '-') {
+            lineIndex -= +value;
+        }
+    }
+}
 
 function extractCommand(text) {
     return text.split(' ')[0];
