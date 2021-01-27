@@ -10,6 +10,7 @@ const items = fs.readFileSync('./input.txt').toString().replace(/\r\n/g, '\n').s
 function executeItem(item) {
     if (visitedIndexes.has(lineIndex)) {
         console.log('infinite loop detected:', lineIndex);
+        console.log('accumilator:', accumilator);
         visitedIndexes.clear();
     }
 
